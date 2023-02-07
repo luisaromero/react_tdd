@@ -10,9 +10,11 @@ export const Form = () => {
         type: ""
     })
 
+    const [isSaving, setIsSaving] = useState(false)
+
     const handleSubmit = (e) => {
-        console.log('en button')
         e.preventDefault();
+        setIsSaving(true)
         const { name, size, type } = e.target.elements
         if (!name.value) {
             setFormErrors(prevState => ({ ...prevState, name: "The name is required" }))
@@ -57,7 +59,7 @@ export const Form = () => {
                     <option value='clothing'>Clothing</option>
                 </Select>
                 {formErrors.type.length > 0 ? formErrors.type : ""}
-                <Button type="submit">Submit</Button>
+                <Button disabled={isSaving} type="submit">Submit</Button>
             </form>
         </>
     )
