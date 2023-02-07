@@ -12,19 +12,23 @@ export const Form = () => {
 
     const [isSaving, setIsSaving] = useState(false)
 
+    const validateField = ({ name, value }) => {
+        setFormErrors(prevState => ({ ...prevState, [name]: value.length ? "" : `The ${name} is required` }))
+    }
+
+    const validateForm = ({ name, size, type }) => {
+        validateField({ name: "name", value: name })
+        validateField({ name: "size", value: size })
+        validateField({ name: "type", value: type })
+    }
+
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSaving(true)
         const { name, size, type } = e.target.elements
-        if (!name.value) {
-            setFormErrors(prevState => ({ ...prevState, name: "The name is required" }))
-        }
-        if (!size.value) {
-            setFormErrors(prevState => ({ ...prevState, size: "The size is required" }))
-        }
-        if (!type.value) {
-            setFormErrors(prevState => ({ ...prevState, type: "The type is required" }))
-        }
+        validateForm({ name: name.value, size: size.value, type: type.value })
 
         await fetch('/products', {
             method: "POST",
@@ -37,7 +41,7 @@ export const Form = () => {
 
     const handleBlur = (e) => {
         const { name, value } = e.target
-        setFormErrors({ ...formErrors, [name]: value.length ? "" : `The ${name} is required` })
+        validateField({ name, value })
     }
 
     return (
