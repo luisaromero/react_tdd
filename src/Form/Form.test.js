@@ -1,6 +1,22 @@
 import React from 'react';
-import { screen, render, fireEvent } from '@testing-library/react';
-import { Form } from './Form'
+import { rest } from 'msw'
+import { setupServer } from 'msw/node'
+import { screen, render, fireEvent, waitFor } from '@testing-library/react';
+import { Form } from './Form';
+
+const server = setupServer(
+    // Describe network behavior with request handlers.
+    // Tip: move the handlers into their own module and
+    // import it across your browser and Node.js setups!
+    rest.post('/products', (req, res, ctx) =>
+        res(ctx.status(201))),
+)
+
+// Enable request interception.
+beforeAll(() => server.listen())
+
+// Don't forget to clean up afterwards.
+afterAll(() => server.close())
 
 beforeEach(() => render(<Form />))
 
@@ -63,9 +79,13 @@ describe('when the user blurs an empty field', () => {
 })
 
 describe('when the user submit the form', () => {
-    it('should the submit button be disabled until the request is done', () => {
+    it('should the submit button be disabled until the request is done', async () => {
         expect(screen.getByRole('button', { name: /submit/i })).not.toBeDisabled()
         fireEvent.click(screen.getByRole('button', { name: /submit/i }))
         expect(screen.getByRole('button', { name: /submit/i })).toBeDisabled()
+        await waitFor(() =>
+            expect(screen.getByRole('button', { name: /submit/i })).not.toBeDisabled()
+
+        )
     })
 })

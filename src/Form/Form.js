@@ -12,7 +12,7 @@ export const Form = () => {
 
     const [isSaving, setIsSaving] = useState(false)
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         setIsSaving(true)
         const { name, size, type } = e.target.elements
@@ -25,6 +25,14 @@ export const Form = () => {
         if (!type.value) {
             setFormErrors(prevState => ({ ...prevState, type: "The type is required" }))
         }
+
+        await fetch('/products', {
+            method: "POST",
+            body: JSON.stringify({})
+        })
+
+        setIsSaving(false)
+
     }
 
     const handleBlur = (e) => {
