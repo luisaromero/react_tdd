@@ -3,13 +3,15 @@ import { rest } from 'msw'
 import { setupServer } from 'msw/node'
 import { screen, render, fireEvent, waitFor } from '@testing-library/react';
 import { Form } from './Form';
+import { CREATED_STATUS } from '../consts/httpStatus';
+
 
 const server = setupServer(
     // Describe network behavior with request handlers.
     // Tip: move the handlers into their own module and
     // import it across your browser and Node.js setups!
     rest.post('/products', (req, res, ctx) =>
-        res(ctx.status(201))),
+        res(ctx.status(CREATED_STATUS))),
 )
 
 // Enable request interception.
@@ -88,5 +90,10 @@ describe('when the user submit the form', () => {
             expect(submitBtn).not.toBeDisabled()
 
         )
+    })
+
+    it('the form page must display the success message "Product stored"', async () => {
+        fireEvent.click(screen.getByRole('button', { name: /submit/i }))
+        await waitFor(() => expect(screen.getByText(/product stored/i)).toBeInTheDocument())
     })
 })
