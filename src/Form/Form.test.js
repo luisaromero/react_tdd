@@ -3,7 +3,7 @@ import { rest } from 'msw'
 import { setupServer } from 'msw/node'
 import { screen, render, fireEvent, waitFor } from '@testing-library/react';
 import { Form } from './Form';
-import { CREATED_STATUS } from '../consts/httpStatus';
+import { CREATED_STATUS, ERROR_SERVER_STATUS } from '../consts/httpStatus';
 
 
 const server = setupServer(
