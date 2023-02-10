@@ -88,7 +88,7 @@ describe('when the user blurs an empty field', () => {
     )
 })
 
-describe('when the user submit the form', () => {
+describe('when the user submit the form properly and the server returns created status', () => {
     it('should the submit button be disabled until the request is done', async () => {
         const submitBtn = screen.getByRole('button', { name: /submit/i })
         expect(submitBtn).not.toBeDisabled()
@@ -116,6 +116,12 @@ describe('when the user submit the form', () => {
         expect(nameInput).toHaveValue('')
         expect(sizeInput).toHaveValue('')
         expect(typeSelect).toHaveValue('')
+
+    })
+})
+
+describe('when the user submit the form and the server returns unexpected error', () => {
+    it('the form page must display the error message _“Unexpected error, please try again”', async () => {
 
     })
 })
