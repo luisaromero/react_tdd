@@ -3,7 +3,7 @@ import { rest } from 'msw'
 import { setupServer } from 'msw/node'
 import { screen, render, fireEvent, waitFor } from '@testing-library/react';
 import { Form } from './Form';
-import { CREATED_STATUS, ERROR_SERVER_STATUS } from '../consts/httpStatus';
+import { CREATED_STATUS, ERROR_SERVER_STATUS, INVALID_REQUEST_STATUS } from '../consts/httpStatus';
 
 
 const server = setupServer(
@@ -25,7 +25,8 @@ beforeAll(() => server.listen())
 // Don't forget to clean up afterwards.
 afterAll(() => server.close())
 
-
+// Reset any runtime request handlers we may add during the tests.
+afterEach(() => server.resetHandlers())
 
 
 beforeEach(() => render(<Form />))
@@ -127,3 +128,23 @@ describe('when the user submit the form and the server returns unexpected error'
 
     })
 })
+
+describe('when the user submit the form and the server returns an invalid request error', () => {
+    it('the form page must display the error message “The form is invalid, the fields [field1...fieldN] are required”', async () => {
+
+        server.use(
+            rest.post('/products', (req, res, ctx) => {
+                return res(
+                    ctx.status(INVALID_REQUEST_STATUS),
+                    ctx.json({ message: 'The form is invalid, the fields name , size , type are required' }),
+                )
+            }),
+        )
+
+        fireEvent.click(screen.getByRole('button', { name: /submit/i }))
+
+        await waitFor(() => expect(screen.getByText(/the form is invalid, the fields name , size , type are required/i)).toBeInTheDocument())
+
+    })
+})
+
