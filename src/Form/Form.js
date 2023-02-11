@@ -37,11 +37,14 @@ export const Form = () => {
 
         if (err.status === ERROR_SERVER_STATUS) {
             setErrorMessage('Unexpected error, please try again');
+            return
         }
         if (err.status === INVALID_REQUEST_STATUS) {
             const data = await err.json()
             setErrorMessage(data.message);
+            return
         }
+        setErrorMessage('Connection error, please try later')
     }
 
     const handleSubmit = async (e) => {

@@ -148,3 +148,19 @@ describe('when the user submit the form and the server returns an invalid reques
     })
 })
 
+describe('when the user submit the form and not found service path ', () => {
+    it('In the not found service path, the form page must display the message “Connection error, please try later”_”', async () => {
+
+        server.use(
+            rest.post('/products', (req, res) => {
+                res.networkError('Connection error, please try later')
+            }),
+        )
+
+        fireEvent.click(screen.getByRole('button', { name: /submit/i }))
+
+        await waitFor(() => expect(screen.getByText(/connection error, please try later/i)).toBeInTheDocument())
+
+    })
+})
+
