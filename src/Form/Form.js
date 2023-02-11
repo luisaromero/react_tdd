@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TextField, InputLabel, Select, Button } from '@mui/material';
 import { saveProduct } from '../services/producServices';
-import { CREATED_STATUS } from '../consts/httpStatus';
+import { CREATED_STATUS, ERROR_SERVER_STATUS } from '../consts/httpStatus';
 
 
 export const Form = () => {
@@ -14,6 +14,8 @@ export const Form = () => {
 
     const [isSaving, setIsSaving] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+
 
     const validateField = ({ name, value }) => {
         setFormErrors(prevState => ({ ...prevState, [name]: value.length ? "" : `The ${name} is required` }))
@@ -44,6 +46,10 @@ export const Form = () => {
             e.target.reset()
             setIsSuccess(true);
         }
+        if (response.status === ERROR_SERVER_STATUS) {
+            e.target.reset()
+            setErrorMessage('Unexpected error, please try again');
+        }
         setIsSaving(false)
 
     }
@@ -56,6 +62,7 @@ export const Form = () => {
     return (
         <>
             {isSuccess && <p>Product stored</p>}
+            <p>{errorMessage}</p>
             <h1>Create Product</h1>
             <form onSubmit={handleSubmit}>
                 <TextField label="name" id="name" name="name" helperText={formErrors.name} onBlur={handleBlur} />
