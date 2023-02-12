@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, InputLabel, Select, Button } from '@mui/material';
+import { TextField, InputLabel, Select, Button, Container, CssBaseline, Grid, Typography } from '@mui/material';
 import { saveProduct } from '../services/producServices';
 import { CREATED_STATUS, ERROR_SERVER_STATUS, INVALID_REQUEST_STATUS } from '../consts/httpStatus';
 
@@ -83,37 +83,50 @@ export const Form = () => {
     }
 
     return (
-        <>
+        <Container maxWidth="xs">
+            <CssBaseline />
+            <Typography component="h1" variant="h5" align='center'>Create Product</Typography>
             {isSuccess && <p>Product stored</p>}
             <p>{errorMessage}</p>
-            <h1>Create Product</h1>
             <form onSubmit={handleSubmit}>
-                <TextField label="name" id="name" name="name" helperText={formErrors.name} onBlur={handleBlur} />
+                <Grid container spacing={4}>
+                    <Grid item xs={12}>
+                        <TextField
+                            fullWidth
+                            error={!!formErrors.name}
+                            label="name" id="name" name="name" helperText={formErrors.name} onBlur={handleBlur} />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <TextField fullWidth error={!!formErrors.size}
+                            label="size" id="size" helperText={formErrors.size} name="size" onBlur={handleBlur} />
+                    </Grid>
+                    <Grid item xs={12}>
+                        <InputLabel htmlFor="type">Type</InputLabel>
+                        <Select
+                            fullWidth
+                            native
+                            // error={!!formErrors.type}
+                            inputProps={{
+                                name: "type",
+                                id: "type"
 
-                <TextField label="size" id="size" helperText={formErrors.size} name="size" onBlur={handleBlur} />
+                            }}
 
-                <InputLabel htmlFor="type">Type</InputLabel>
-                <Select
-                    native
-                    inputProps={{
-                        name: "type",
-                        id: "type"
+                        >
+                            <option value='' aria-label='None' />
+                            <option value='electronic'>Electronic</option>
+                            <option value='furniture'>Furniture</option>
+                            <option value='clothing'>Clothing</option>
+                        </Select>
+                        {!!formErrors.type.length && <p>{formErrors.type}</p>}
+                    </Grid>
+                    <Grid item xs={12}>
 
-                    }}
-
-                // value=''
-                // label="Age"
-                // onChange={handleChange}
-                >
-                    <option value='' aria-label='None' />
-                    <option value='electronic'>Electronic</option>
-                    <option value='furniture'>Furniture</option>
-                    <option value='clothing'>Clothing</option>
-                </Select>
-                {formErrors.type.length > 0 ? formErrors.type : ""}
-                <Button disabled={isSaving} type="submit">Submit</Button>
+                        <Button fullWidth disabled={isSaving} type="submit">Submit</Button>
+                    </Grid>
+                </Grid>
             </form>
-        </>
+        </Container>
     )
 }
 export default Form
